@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FAMI / HayVoary – Quiz Éducatif</title>
+  <meta name="description" content="Plateforme éducative FAMI/HayVoary avec inscription, leçons et quiz Likert sur hygiène, eau, forêt et action communautaire." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="bg-shape"></div>
+  <div class="bg-shape bg2"></div>
+
+  <!-- App shell -->
+  <div class="app-shell">
+
+    <!-- Header / barre d'état -->
+    <header class="topbar">
+      <div class="brand">
+        <img src="FAMI2.jpg" alt="Logo FAMI" />
+        <div>
+          <h1>FAMI / HayVoary</h1>
+          <p id="welcomeText">Mianara, miaro, manova</p>
+        </div>
+      </div>
+      <div class="top-actions">
+        <button id="langBtn" class="pill">MG</button>
+      </div>
+    </header>
+
+    <!-- Navigation boutons (pages cachées -> affichage au clic) -->
+    <nav class="main-nav" id="mainNav">
+      <button data-page="homePage" class="nav-btn active" data-i18n="nav_home">Accueil</button>
+      <button data-page="chaptersPage" class="nav-btn" data-i18n="nav_chapters">Chapitres</button>
+      <button data-page="quizPage" class="nav-btn pulse-main" data-i18n="nav_quiz">Quiz principal</button>
+      <button data-page="resultPage" class="nav-btn" data-i18n="nav_result">Résultats</button>
+      <button data-page="galleryPage" class="nav-btn" data-i18n="nav_gallery">Galerie</button>
+    </nav>
+
+    <!-- PAGES -->
+    <main class="pages">
+
+      <!-- PAGE INSCRIPTION (visible au démarrage) -->
+      <section id="registerPage" class="page visible">
+        <div class="card register-card">
+          <h2 data-i18n="register_title">Inscription de l’élève</h2>
+          <p data-i18n="register_sub">
+            Avant d’entrer dans la plateforme, remplis les informations ci-dessous.
+          </p>
+
+          <form id="registerForm" class="register-form">
+            <label>
+              <span data-i18n="form_name">Nom complet</span>
+              <input type="text" id="childName" required placeholder="Ex: Rakoto Aina" />
+            </label>
+            <label>
+              <span data-i18n="form_age">Âge</span>
+              <input type="number" id="childAge" min="6" max="17" required placeholder="Ex: 12" />
+            </label>
+            <label>
+              <span data-i18n="form_class">Classe</span>
+              <input type="text" id="childClass" required placeholder="Ex: CM2 / 6ème" />
+            </label>
+            <label>
+              <span data-i18n="form_school">École</span>
+              <input type="text" id="childSchool" required placeholder="Ex: EPP ..." />
+            </label>
+            <button type="submit" class="btn big" data-i18n="register_start">Commencer l’apprentissage</button>
+          </form>
+        </div>
+      </section>
+
+      <!-- PAGE ACCUEIL -->
+      <section id="homePage" class="page">
+        <div class="card hero">
+          <div class="hero-left">
+            <h2 data-i18n="home_title">Bienvenue sur la plateforme éducative FAMI</h2>
+            <p data-i18n="home_text">
+              Ici, le quiz est l’élément principal. Tu avances chapitre par chapitre :
+              <strong>Leçon ➜ Questions Likert ➜ Validation ➜ Chapitre suivant</strong>.
+            </p>
+
+            <div class="hero-actions">
+              <button class="btn" data-go="chaptersPage" data-i18n="btn_start_path">Démarrer le parcours</button>
+              <button class="btn secondary" data-go="quizPage" data-i18n="btn_go_quiz">Aller au quiz principal</button>
+            </div>
+          </div>
+          <div class="hero-right">
+            <img src="ACT.jpg" alt="Visuel éducatif" />
+          </div>
+        </div>
+      </section>
+
+      <!-- PAGE CHAPITRES -->
+      <section id="chaptersPage" class="page">
+        <div class="card">
+          <h2 data-i18n="chapters_title">Parcours des 4 chapitres</h2>
+          <p data-i18n="chapters_sub">
+            Lis la leçon de chaque chapitre avant de répondre aux questions.
+          </p>
+
+          <div class="chapter-grid" id="chapterGrid">
+            <!-- injecté en JS -->
+          </div>
+        </div>
+      </section>
+
+      <!-- PAGE QUIZ PRINCIPAL -->
+      <section id="quizPage" class="page">
+        <div class="card quiz-main-card">
+          <div class="quiz-head">
+            <h2 data-i18n="quiz_main_title">Quiz principal (60 questions Likert)</h2>
+            <p id="quizProgressText">Chapitre 1 / 4 — Question 1 / 15</p>
+            <div class="progress-wrap">
+              <div id="globalProgress" class="progress-bar"></div>
+            </div>
+          </div>
+
+          <!-- étape leçon -->
+          <div id="lessonStep" class="step-box">
+            <h3 id="lessonTitle"></h3>
+            <div id="lessonContent" class="lesson-content"></div>
+            <button id="startChapterQuizBtn" class="btn big" data-i18n="btn_after_lesson">
+              J’ai lu la leçon, commencer le quiz
+            </button>
+          </div>
+
+          <!-- étape question -->
+          <div id="questionStep" class="step-box hidden">
+            <h3 id="questionText"></h3>
+            <p class="likert-note" data-i18n="likert_note">
+              Échelle Likert : choisis ton degré d’accord.
+            </p>
+
+            <div id="likertChoices" class="likert-grid">
+              <!-- boutons injectés -->
+            </div>
+
+            <div class="quiz-actions">
+              <button id="prevQuestionBtn" class="btn secondary" data-i18n="btn_prev">Précédent</button>
+              <button id="nextQuestionBtn" class="btn" data-i18n="btn_next">Suivant</button>
+            </div>
+          </div>
+
+          <!-- étape fin chapitre -->
+          <div id="chapterDoneStep" class="step-box hidden">
+            <h3 id="chapterDoneTitle"></h3>
+            <p id="chapterDoneText"></p>
+            <button id="nextChapterBtn" class="btn big" data-i18n="btn_next_chapter">Continuer vers le chapitre suivant</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- PAGE RESULTATS -->
+      <section id="resultPage" class="page">
+        <div class="card result-card">
+          <h2 data-i18n="result_title">Résultats finaux</h2>
+          <p id="finalSummary"></p>
+
+          <div class="score-ring">
+            <svg viewBox="0 0 120 120">
+              <circle cx="60" cy="60" r="52" class="ring-bg"></circle>
+              <circle cx="60" cy="60" r="52" class="ring-fg" id="ringFg"></circle>
+            </svg>
+            <div class="score-center">
+              <strong id="finalPercent">0%</strong>
+              <span data-i18n="result_mastery">Maîtrise</span>
+            </div>
+          </div>
+
+          <div id="badgeBox" class="badge-box hidden">
+            <h3>🏅 ANKIZY VANONA</h3>
+            <p data-i18n="badge_text">
+              Félicitations ! Tu as terminé le parcours éducatif FAMI.
+            </p>
+            <button id="downloadBadgeBtn" class="btn secondary" data-i18n="btn_badge">Télécharger le badge (image)</button>
+          </div>
+
+          <div class="result-actions">
+            <button id="restartAllBtn" class="btn" data-i18n="btn_restart_all">Recommencer tout le parcours</button>
+            <button class="btn secondary" data-go="quizPage" data-i18n="btn_back_quiz">Retour au quiz</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- PAGE GALERIE -->
+      <section id="galleryPage" class="page">
+        <div class="card">
+          <h2 data-i18n="gallery_title">Galerie visuelle</h2>
+          <div id="galleryGrid" class="gallery-grid"></div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
